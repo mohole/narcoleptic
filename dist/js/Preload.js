@@ -16,6 +16,7 @@ InfiniteScroller.Preload.prototype = {
     this.load.spritesheet('dog', '../assets/images/dog_walk.png', 122, 92, 2);
     this.load.spritesheet('playerScratch', '../assets/images/dog_scratch.png', 116, 100, 2);
     this.load.spritesheet('playerDig', '../assets/images/dog_dig.png', 129, 100, 2);
+    this.load.spritesheet('coin', '../assets/images/onecent.png', 50, 50);
     this.load.image('ground', '../assets/images/ground.png');
     this.load.image('grass', '../assets/images/grass.png');
     this.load.audio('whine', ['../assets/audio/whine.ogg', '../assets/audio/whine.mp3']);

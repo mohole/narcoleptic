@@ -22,7 +22,9 @@ InfiniteScroller.Game.prototype = {
     this.generateFleas();
     //and the toy mounds
     this.generateMounds();
-
+    //create the coins
+    this.generateCoins();
+      
     //put everything in the correct order (the grass will be camoflauge),
     //but the toy mounds have to be above that to be seen, but behind the
     //ground so they barely stick up
@@ -87,7 +89,7 @@ InfiniteScroller.Game.prototype = {
 
     //stats
     var style1 = { font: "20px Arial", fill: "#ff0"};
-    var t1 = this.game.add.text(10, 20, "Points:", style1);
+    var t1 = this.game.add.text(10, 20, "Coins:", style1);
     var t2 = this.game.add.text(this.game.width-300, 20, "Remaining Flea Scratches:", style1);
     t1.fixedToCamera = true;
     t2.fixedToCamera = true;
@@ -105,6 +107,7 @@ InfiniteScroller.Game.prototype = {
     //collision
     this.game.physics.arcade.collide(this.player, this.ground, this.playerHit, null, this);
     this.game.physics.arcade.collide(this.player, this.fleas, this.playerBit, null, this);
+    this.game.physics.arcade.collide(this.player, this.coins, this.getCoins, null, this);
     this.game.physics.arcade.overlap(this.player, this.mounds, this.collect, this.checkDig, this);
 
     //only respond to keys and keep the speed if the player is alive
@@ -125,6 +128,8 @@ InfiniteScroller.Game.prototype = {
         this.generateFleas();
         this.mounds.destroy();
         this.generateMounds();
+        this.coins.destroy();
+        this.generateCoins();
 
         //put everything back in the proper order
         this.game.world.bringToTop(this.grass);
@@ -322,7 +327,7 @@ InfiniteScroller.Game.prototype = {
       //add sprite within an area excluding the beginning and ending
       //  of the game world so items won't suddenly appear or disappear when wrapping
       var x = this.game.rnd.integerInRange(this.game.width, this.game.world.width - this.game.width);
-      flea = this.fleas.create(x, this.game.height-110, 'flea');
+      flea = this.fleas.create(x, this.game.height-390, 'flea');
 
       //physics properties
       flea.body.velocity.x = this.game.rnd.integerInRange(-20,0);
@@ -330,6 +335,46 @@ InfiniteScroller.Game.prototype = {
       flea.body.immovable = true;
       flea.body.collideWorldBounds = false;
     }
+  },
+  generateCoins: function(){
+    this.coins = this.game.add.group();
+
+    //enable physics in them
+    this.coins.enableBody = true;
+
+    //phaser's random number generator
+    var numCoins = this.game.rnd.integerInRange(1, 5)
+    var coin;
+
+    for (var i = 0; i < numCoins; i++) {
+      //add sprite within an area excluding the beginning and ending
+      //  of the game world so items won't suddenly appear or disappear when wrapping
+      var x = this.game.rnd.integerInRange(this.game.width, this.game.world.width - this.game.width);
+    
+      
+      //coin = game.add.sprite(50, game.world.height -150, 'money');
+      //coins are generated at random heights, between 250 and 150 px from bottom
+      coin = this.coins.create(x, this.game.height-Math.floor(Math.random()*(250-150+1)+150), 'coin');
+      coin.height=30;
+      coin.width=30; 
+        
+      flip = coin.animations.add('flip',[0,1,2,3,4,5,6],8,true);
+       
+      coin.play("flip");
+
+      //physics properties
+      coin.body.velocity.x = 0;
+
+      coin.body.immovable = false; //or true?
+      coin.body.collideWorldBounds = false;
+
+    }
+  },
+  getCoins: function(player, coin){
+    coin.destroy();
+    //refresh our points stats
+    this.points += 1;
+    this.refreshStats();
   },
   render: function()
     {
